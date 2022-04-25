@@ -1,5 +1,7 @@
 import { Button, Paper, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { postAdded } from "./postsSlice";
 
 export default function Form() {
   const emptyPost = {
@@ -9,8 +11,8 @@ export default function Form() {
     tags: "",
     selectedFile: "",
   };
-
   const [postData, setPostData] = useState(emptyPost);
+  const dispatch = useDispatch();
 
   function handleChange(e) {
     setPostData((prevData) => {
@@ -20,8 +22,12 @@ export default function Form() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    dispatch(postAdded(postData));
+    clearPost();
+  }
 
-    console.log("submitted");
+  function clearPost() {
+    setPostData(emptyPost);
   }
 
   return (
@@ -76,12 +82,7 @@ export default function Form() {
       <Button variant="contained" fullWidth type="submit">
         Submit
       </Button>
-      <Button
-        variant="contained"
-        color="error"
-        fullWidth
-        onClick={() => setPostData(emptyPost)}
-      >
+      <Button variant="contained" color="error" fullWidth onClick={clearPost}>
         Clear
       </Button>
     </Paper>
