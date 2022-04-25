@@ -6,10 +6,59 @@ const initialState = {
   posts: [],
   status: "idle",
   error: null,
+  editingID: 0,
 };
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const res = await fetch(DATABASE_URL + "/posts");
+  return res.json();
+});
+
+export const addNewPost = createAsyncThunk(
+  "posts/addNewPost",
+  async (initialPost) => {
+    const res = await fetch(DATABASE_URL + "/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(initialPost),
+    });
+    return res.json();
+  }
+);
+
+export const updatePost = createAsyncThunk(
+  "posts/updatePost",
+  async (updatedPost) => {
+    const res = await fetch(DATABASE_URL + "/posts/" + updatedPost._id, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedPost),
+    });
+    return res.json();
+  }
+);
+
+export const deletePost = createAsyncThunk(
+  "posts/deletePost",
+  async (postID) => {
+    const res = await fetch(DATABASE_URL + "/posts/" + postID, {
+      method: "DELETE",
+    });
+    return res.json();
+  }
+);
+
+export const likePost = createAsyncThunk("posts/likePost", async (postID) => {
+  const res = await fetch(DATABASE_URL + "/posts/" + postID + "/likePost", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   return res.json();
 });
 
@@ -19,6 +68,9 @@ export const postsSlice = createSlice({
   reducers: {
     postAdded(state, action) {
       state.posts.push(action.payload);
+    },
+    fillForm(state, action) {
+      state.editingID = action.payload;
     },
   },
   extraReducers(builder) {
@@ -30,18 +82,32 @@ export const postsSlice = createSlice({
         state.status = "succeeded";
         state.posts = state.posts.concat(action.payload);
       })
-      .addCase(fetchPosts.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
+      .addCase(addNewPost.fulfilled, (state, action) => {
+        state.posts.push(action.payload);
+      })
+      .addCase(updatePost.fulfilled, (state, action) => {
+        state.posts = state.posts.map((post) => {
+          return post._id === action.payload._id ? action.payload : post;
+        });
+      })
+      .addCase(deletePost.fulfilled, (state, action) => {
+        state.posts = state.posts.filter(
+          (post) => post._id !== action.payload.id
+        );
+      })
+      .addCase(likePost.fulfilled, (state, action) => {
+        state.posts = state.posts.map((post) => {
+          return post._id === action.payload._id ? action.payload : post;
+        });
       });
   },
 });
 
-export const { postAdded } = postsSlice.actions;
+export const { postAdded, fillForm } = postsSlice.actions;
 
 export default postsSlice.reducer;
 
 export const selectAllPosts = (state) => state.posts.posts;
 
-// export const selectPostById = (state, postId) =>
-//   state.posts.find((post) => post.id === postId);
+export const selectCurrentPost = (state) =>
+  state.posts.posts.filter((post) => post._id === state.posts.editingID);

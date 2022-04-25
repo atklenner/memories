@@ -16,6 +16,7 @@ export default function Posts() {
     }
   }, [postStatus, dispatch]);
 
+  // this doesn't have a way to render if there are no posts
   return (
     <Grid container>
       {posts.map((post) => (
