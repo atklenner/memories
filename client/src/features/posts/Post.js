@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React from "react";
 
-export default function Post() {
+export default function Post({ title, creator, message, tags }) {
   return (
     <Card>
       <CardMedia
@@ -19,16 +19,16 @@ export default function Post() {
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-          Creator
+          {creator}
         </Typography>
         <Typography gutterBottom variant="h5" component="div">
-          Title
+          {title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Tags
+          {tags}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Message
+          {message}
         </Typography>
       </CardContent>
       <CardActions>

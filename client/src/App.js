@@ -1,6 +1,6 @@
 import { Container, AppBar, Typography, Grid } from "@mui/material";
-import Posts from "./components/Posts";
-import Form from "./components/Form";
+import Posts from "./features/posts/Posts";
+import Form from "./features/posts/Form";
 
 function App() {
   return (
