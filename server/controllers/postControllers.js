@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Post = require("../models/post");
 
 exports.getPosts = async (req, res, next) => {
