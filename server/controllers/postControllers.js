@@ -10,8 +10,14 @@ exports.getPosts = async (req, res, next) => {
 };
 
 exports.createPost = async (req, res, next) => {
-  const { title, message, selectedFile, creator, tags } = req.body;
-  const newPost = new Post({ title, message, selectedFile, creator, tags });
+  const { title, message, selectedFile, tags } = req.body;
+  const newPost = new Post({
+    title,
+    message,
+    selectedFile,
+    creator: req.userID,
+    tags,
+  });
   try {
     await newPost.save();
     res.status(201).json(newPost);
@@ -20,14 +26,14 @@ exports.createPost = async (req, res, next) => {
   }
 };
 
-exports.getPost = async (req, res, next) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    res.status(200).json(post);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-};
+// exports.getPost = async (req, res, next) => {
+//   try {
+//     const post = await Post.findById(req.params.id);
+//     res.status(200).json(post);
+//   } catch (error) {
+//     res.status(404).json({ message: error.message });
+//   }
+// };
 
 exports.updatePost = async (req, res, next) => {
   const { title, message, creator, selectedFile, tags } = req.body;
@@ -55,6 +61,7 @@ exports.deletePost = async (req, res, next) => {
 };
 
 exports.likePost = async (req, res, next) => {
+  if (!res.userID) return res.json({ message: "Not logged in" });
   try {
     const post = await Post.findById(req.params.id);
     const updatedPost = await Post.findByIdAndUpdate(
