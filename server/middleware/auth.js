@@ -3,20 +3,22 @@ const jwt = require("jsonwebtoken");
 
 const auth = async (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    const isCustomAuth = token.length < 500;
-
-    let decodedData;
-
-    if (token && isCustomAuth) {
-      decodedData = jwt.verify(token, SESSION_SECRET);
-      req.userID = decodedData?.id;
-    } else {
-      decodedData = jwt.decode(token);
-
-      req.userID = decodedData?.sub;
+    let token = req.headers["x-access-token"];
+    if (!token) {
+      return res.status(403).send({
+        message: "No token provided!",
+      });
     }
-    next();
+
+    jwt.verify(token, SESSION_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(401).send({
+          message: "Unauthorized!",
+        });
+      }
+      req.userId = decoded.id;
+      next();
+    });
   } catch (error) {
     console.error(error);
   }

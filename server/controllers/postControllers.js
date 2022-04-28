@@ -10,12 +10,12 @@ exports.getPosts = async (req, res, next) => {
 };
 
 exports.createPost = async (req, res, next) => {
-  const { title, message, selectedFile, tags } = req.body;
+  const { title, message, selectedFile, tags, creator } = req.body;
   const newPost = new Post({
     title,
     message,
     selectedFile,
-    creator: req.userID,
+    creator,
     tags,
   });
   try {
@@ -61,7 +61,6 @@ exports.deletePost = async (req, res, next) => {
 };
 
 exports.likePost = async (req, res, next) => {
-  if (!res.userID) return res.json({ message: "Not logged in" });
   try {
     const post = await Post.findById(req.params.id);
     const updatedPost = await Post.findByIdAndUpdate(

@@ -22,7 +22,7 @@ exports.signup = async (req, res) => {
       SESSION_SECRET,
       { expiresIn: "1h" }
     );
-    res.status(201).json({ newUser, token });
+    res.status(201).json({ result: newUser, token });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -43,6 +43,7 @@ exports.signin = async (req, res) => {
         SESSION_SECRET,
         { expiresIn: "1h" }
       );
+      res.status(200).json({ result: userExists, token });
     } else {
       res.status(400).json({ message: "Incorrect password" });
     }
