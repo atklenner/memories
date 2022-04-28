@@ -11,7 +11,7 @@ const initialState = {
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const res = await fetch(DATABASE_URL + "/posts");
-  return res.json();
+  return await res.json();
 });
 
 export const addNewPost = createAsyncThunk(
@@ -21,10 +21,11 @@ export const addNewPost = createAsyncThunk(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "x-access-token": localStorage.getItem("token"),
       },
       body: JSON.stringify(initialPost),
     });
-    return res.json();
+    return await res.json();
   }
 );
 
@@ -35,10 +36,11 @@ export const updatePost = createAsyncThunk(
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        "x-access-token": localStorage.getItem("token"),
       },
       body: JSON.stringify(updatedPost),
     });
-    return res.json();
+    return await res.json();
   }
 );
 
@@ -47,8 +49,11 @@ export const deletePost = createAsyncThunk(
   async (postID) => {
     const res = await fetch(DATABASE_URL + "/posts/" + postID, {
       method: "DELETE",
+      headers: {
+        "x-access-token": localStorage.getItem("token"),
+      },
     });
-    return res.json();
+    return await res.json();
   }
 );
 
@@ -57,9 +62,10 @@ export const likePost = createAsyncThunk("posts/likePost", async (postID) => {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("token"),
     },
   });
-  return res.json();
+  return await res.json();
 });
 
 export const postsSlice = createSlice({
