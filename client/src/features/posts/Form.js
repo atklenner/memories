@@ -5,13 +5,13 @@ import { addNewPost, fillForm, selectAllPosts, updatePost } from "./postsSlice";
 
 export default function Form() {
   const emptyPost = {
-    creator: "",
     title: "",
     message: "",
     tags: "",
     selectedFile: "",
   };
   const [postData, setPostData] = useState(emptyPost);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const dispatch = useDispatch();
   const posts = useSelector(selectAllPosts);
   const postID = useSelector((state) => state.posts.editingID);
@@ -25,9 +25,9 @@ export default function Form() {
   function handleSubmit(e) {
     e.preventDefault();
     if (postID) {
-      dispatch(updatePost(postData));
+      dispatch(updatePost({ ...postData, creator: user.username }));
     } else {
-      dispatch(addNewPost(postData));
+      dispatch(addNewPost({ ...postData, creator: user.username }));
     }
     clearPost();
   }
@@ -38,65 +38,64 @@ export default function Form() {
   }
 
   useEffect(() => {
-    // if (postID) console.log(posts.filter((post) => post._id === postID));
     if (postID) setPostData(posts.filter((post) => post._id === postID)[0]);
   }, [postID, posts]);
 
   return (
     <Paper component="form" elevation={4} onSubmit={handleSubmit}>
-      <Typography>Create a New Memory</Typography>
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        id="creator"
-        label="Creator"
-        name="creator"
-        type="text"
-        value={postData.creator}
-        onChange={handleChange}
-      />
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        name="title"
-        label="Title"
-        type="text"
-        id="title"
-        value={postData.title}
-        onChange={handleChange}
-      />
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        name="message"
-        label="Message"
-        type="text"
-        id="message"
-        multiline
-        rows={4}
-        value={postData.message}
-        onChange={handleChange}
-      />
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        name="tags"
-        label="Tags (comma separated)"
-        value={postData.tags}
-        onChange={(e) =>
-          setPostData({ ...postData, tags: e.target.value.split(",") })
-        }
-      />
-      <Button variant="contained" fullWidth type="submit">
-        Submit
-      </Button>
-      <Button variant="contained" color="error" fullWidth onClick={clearPost}>
-        Clear
-      </Button>
+      {!user ? (
+        <Typography>Login to create a post</Typography>
+      ) : (
+        <div>
+          <Typography>{postID ? "Editing" : "Create a New Memory"}</Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="title"
+            label="Title"
+            type="text"
+            id="title"
+            value={postData.title}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="message"
+            label="Message"
+            type="text"
+            id="message"
+            multiline
+            rows={4}
+            value={postData.message}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="tags"
+            label="Tags (comma separated)"
+            value={postData.tags}
+            onChange={(e) =>
+              setPostData({ ...postData, tags: e.target.value.split(",") })
+            }
+          />
+          <Button variant="contained" fullWidth type="submit">
+            Submit
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            fullWidth
+            onClick={clearPost}
+          >
+            Clear
+          </Button>
+        </div>
+      )}
     </Paper>
   );
 }
