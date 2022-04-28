@@ -1,23 +1,15 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import { AppBar, Typography, Container, Button } from "@mui/material";
+import { Container } from "@mui/material";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
+import Header from "./components/Header";
 
 function App() {
   return (
     <BrowserRouter>
       <Container maxWidth="lg">
-        <AppBar position="relative">
-          <Link to="/">
-            <Typography component="h1" variant="h1">
-              Memories
-            </Typography>
-          </Link>
-          <Link to="/signin">
-            <Button>Sign In</Button>
-          </Link>
-        </AppBar>
+        <Header />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signin" element={<Signin />} />
