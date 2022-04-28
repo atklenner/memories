@@ -1,16 +1,46 @@
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
+import { DATABASE_URL } from "../constants/constants";
+import { useState } from "react";
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (event) => {
+    setFormData((prevData) => {
+      return { ...prevData, [event.target.name]: event.target.value };
+    });
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    try {
+      const res = await fetch(DATABASE_URL + "/user/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      console.log(data.result);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", data.result);
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -34,6 +64,8 @@ export default function SignIn() {
             margin="normal"
             required
             fullWidth
+            value={formData.email}
+            onChange={handleChange}
             id="email"
             label="Email Address"
             name="email"
@@ -44,6 +76,8 @@ export default function SignIn() {
             margin="normal"
             required
             fullWidth
+            value={formData.password}
+            onChange={handleChange}
             name="password"
             label="Password"
             type="password"
