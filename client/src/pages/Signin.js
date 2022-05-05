@@ -33,10 +33,12 @@ export default function SignIn() {
         },
         body: JSON.stringify(formData),
       });
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.result));
-      navigate("/");
+      const { token, result } = await res.json();
+      if (token) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(result));
+        navigate("/");
+      }
     } catch (error) {
       console.error(error);
     }
