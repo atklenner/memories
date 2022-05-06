@@ -1,11 +1,37 @@
 const Post = require("../models/post");
 
-exports.getPosts = async (req, res, next) => {
+exports.getPosts = async (req, res) => {
+  const { page } = req.query;
+
   try {
-    const posts = await Post.find().sort({ date: -1 });
-    res.status(200).json(posts);
+    const LIMIT = 4;
+    const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every page
+
+    const total = await Post.countDocuments({});
+    const posts = await Post.find()
+      .sort({ _id: -1 })
+      .limit(LIMIT)
+      .skip(startIndex);
+    res.json({
+      data: posts,
+      currentPage: Number(page),
+      numberOfPages: Math.ceil(total / LIMIT),
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(404).json({ message: error.message });
+  }
+};
+
+exports.getPostsBySearch = async (req, res) => {
+  const { searchQuery, tags } = req.query;
+  try {
+    const title = new RegExp(searchQuery, "i");
+    const posts = await Post.find({
+      $or: [{ title }, { tags: { $in: tags.split(",") } }],
+    });
+    res.json(posts);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };
 

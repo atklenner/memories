@@ -5,6 +5,8 @@ const auth = require("../middleware/auth");
 
 router.get("/", postController.getPosts);
 
+router.get("/search", postController.getPostsBySearch);
+
 router.post("/", auth, postController.createPost);
 
 // router.get("/:id", postController.getPost);

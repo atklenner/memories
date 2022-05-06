@@ -7,6 +7,8 @@ const initialState = {
   status: "idle",
   error: null,
   editingID: 0,
+  currentPage: 1,
+  numberOfPages: 1,
 };
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
@@ -86,7 +88,9 @@ export const postsSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.posts = state.posts.concat(action.payload);
+        state.posts = state.posts.concat(action.payload.data);
+        state.currentPage = action.payload.currentPage;
+        state.numberOfPages = action.payload.numberOfPages;
       })
       .addCase(addNewPost.fulfilled, (state, action) => {
         state.posts.push(action.payload);

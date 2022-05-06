@@ -16,14 +16,14 @@ export default function Posts() {
     }
   }, [postStatus, dispatch]);
 
-  // this doesn't have a way to render if there are no posts
   return (
     <Grid container>
-      {posts.map((post) => (
-        <Grid item xs={6} key={post._id}>
-          <Post {...post} />
-        </Grid>
-      ))}
+      {posts &&
+        posts.map((post) => (
+          <Grid item xs={6} key={post._id}>
+            <Post {...post} />
+          </Grid>
+        ))}
     </Grid>
   );
 }
