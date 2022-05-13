@@ -71,3 +71,22 @@
   border-radius: 5px;
   box-shadow: 0 0 10px lightgray;
 }
+
+.row {
+  margin-right: 1em;
+}
+
+.card-container {
+  margin-top: 3rem;
+}
+
+.card {
+  border-radius: 5px;
+  box-shadow: 0 0 10px lightgray;
+  padding: 0;
+  margin-bottom: 3em;
+}
+
+.card-content {
+  padding: 1em;
+}
